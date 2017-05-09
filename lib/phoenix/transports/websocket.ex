@@ -70,9 +70,9 @@ defmodule Phoenix.Transports.WebSocket do
         params     = conn.params
         serializer = Keyword.fetch!(opts, :serializer)
 
-        case Transport.connect(endpoint, handler, transport, __MODULE__, serializer, params) do
+        case Transport.connect(endpoint, handler, transport, __MODULE__, serializer, Map.put(params, :lix_conn, lix_conn)) do
           {:ok, socket} ->
-            {:ok, conn, {__MODULE__, {Map.update!(socket, :assigns, &Map.put(&1, :lix_conn, conn)), opts}}}
+            {:ok, conn, {__MODULE__, {socket, opts}}}
           :error ->
             send_resp(conn, 403, "")
             {:error, conn}
